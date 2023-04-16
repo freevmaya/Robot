@@ -6,40 +6,96 @@ using UnityEngine;
 namespace Vmaya.Robot.Components
 {
     [ExecuteInEditMode]
-    public class ConnectPoint : MonoBehaviour
+    public class ConnectPoint : MonoBehaviour, IJoinPoint
     {
-        protected IConnectableElement _own => GetComponentInParent<ConnectableElement>();
-        private IConnectableElement _connected => GetComponentInChildren<ConnectableElement>();
+        protected IConnectableElement _own => GetComponentInParent<IConnectableElement>();
 
-        public IConnectableElement Connected => _connected;
+        [SerializeField]
+        private ConnectType _connectType;
 
-        public void setConnect(IConnectableElement element)
+        [SerializeField]
+        private float _scaleFactor = 1;
+
+        [SerializeField]
+        private Component connected;
+
+        [SerializeField]
+        private bool _makeChild;
+
+        private IConnectableElement _connected;
+
+        public IConnectableElement Connected { get => _connected; set => SetConnect(value); }
+
+        protected virtual void OnValidate()
+        {
+            if (connected)
+            {
+                IConnectableElement component = connected.GetComponent<IConnectableElement>();
+                if ((connected = component as Component) != null)
+                {
+                    _connected = component;
+                    updateConnected();
+                }
+            }
+        }
+
+        public void SetConnect(IConnectableElement element)
         {
             if (_connected != element)
             {
                 if (_connected != null) disconnect();
-                if (element != null)
+
+                if ((element != _own) && (_connected = element) != null)
+                    updateConnected();
+                else _connected = null;
+            }
+        }
+
+        public void UpdateConnectedPosition()
+        {
+            if (_connected != null) updateConnected(false);
+        }
+
+        public virtual Vector3 getWorldConnectPoint()
+        {
+            return transform.position;
+        }
+
+        protected virtual void updateConnected(bool resetRotateAndScale = true)
+        {
+            if ((_own != null) && (_connected != null))
+            {
+                if (_makeChild) _connected.Trans().parent = transform;
+                connected = _connected as Component;
+                if (resetRotateAndScale)
                 {
-                    element.Trans().parent = transform;
-                    if (_connected != null) updateConnected();
+                    _connected.Trans().rotation = transform.rotation;
+                    _connected.Trans().localScale = new Vector3(_scaleFactor, _scaleFactor, _scaleFactor);
                 }
+                _connected.GetRigidBody().useGravity = false;
+
+                ConfigurableJoint joint = _connected.GetJoint();
+                if (joint)
+                {
+                    _connected.Trans().position = getWorldConnectPoint() - _connected.Trans().TransformVector(joint.anchor);
+                    joint.connectedAnchor = _connected.Trans().InverseTransformPoint(transform.position);
+                    joint.connectedBody = _own.GetRigidBody();
+                }
+                else _connected.Trans().position = transform.position;
             }
         }
 
         private void disconnect()
         {
-            _connected.Trans().parent = transform.root;
-        }
-
-        private void updateConnected()
-        {
-            Vector3 lp = _connected.Trans().localPosition;
-            if (lp.magnitude > 0)
+            if (_connected != null)
             {
-                Component component = _connected as Component;
-
-                _connected.Trans().localPosition = Vector3.zero;
-                _connected.Trans().localRotation = Quaternion.identity;
+                ConfigurableJoint joint = _connected.GetJoint();
+                joint.connectedBody = null;
+                joint.xMotion = ConfigurableJointMotion.Free;
+                joint.yMotion = ConfigurableJointMotion.Free;
+                joint.zMotion = ConfigurableJointMotion.Free;
+                _connected.GetRigidBody().useGravity = true;
+                _connected = null;
             }
         }
 
@@ -48,11 +104,22 @@ namespace Vmaya.Robot.Components
             Utils.DrawArrowGismo(transform, -transform.right);
         }
 
-        protected virtual void Update()
+        public ConnectType GetConnectType()
         {
-#if UNITY_EDITOR
-            if (_connected != null) updateConnected();
-#endif
+            return _connectType;
+        }
+
+        public Transform Trans()
+        {
+            return transform;
+        }
+
+        public IConnectableElement GetConnected()
+        {
+            if (connected && !connected.gameObject.activeSelf)
+                return null;
+
+            return _connected;
         }
     }
 }

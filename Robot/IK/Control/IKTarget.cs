@@ -42,7 +42,7 @@ namespace Vmaya.Robot.Controls
             if (reList != null)
             {
                 for (int i = 0; i < angles.Length; i++)
-                    reList[i].setAngle(Mathf.LerpAngle(reList[i].getAngle(), angles[i], 0.1f));
+                   reList[i].setAngle(Mathf.LerpAngle(reList[i].getAngle(), angles[i], 0.1f));
             }
         }
 
@@ -56,8 +56,13 @@ namespace Vmaya.Robot.Controls
 
             Vector3[] points = IKSystem.NodesFabrik(reList, 0, reList.Count, out angles, transform.position);
 
+            
             for (int i = 0; i < points.Length; i++)
+            {
                 Vmaya.Utils.debugPoint(points[i], 0.5f, Color.black);
+                if (i > 0)
+                    Debug.DrawLine(points[i - 1], points[i], Color.yellow);
+            }
         }
 
         private void RefreshChain()

@@ -129,7 +129,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 3817908613740421882}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.5000001
   m_Height: 2
   m_Direction: 1
@@ -227,7 +227,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 5576446509298076423}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.5000001
   m_Height: 2
   m_Direction: 1
@@ -314,7 +314,8 @@ MonoBehaviour:
   _limit:
     min: -110
     max: 110
-  _localAxis: {x: 0, y: 0, z: 1}
+  _baseDirect: {x: 0, y: 0, z: 1}
+  _axis: {x: -1, y: 0, z: 0}
   StartOffset: {x: 0, y: 0, z: 0}
 --- !u!114 &8566313061435258872
 MonoBehaviour:
@@ -438,7 +439,7 @@ SphereCollider:
   m_GameObject: {fileID: 7341875769281580400}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
@@ -579,7 +580,7 @@ SphereCollider:
   m_GameObject: {fileID: 8714031271323878761}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
@@ -676,7 +677,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 8717084675343937870}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.5000001
   m_Height: 2
   m_Direction: 1

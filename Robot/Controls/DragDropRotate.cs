@@ -1,6 +1,8 @@
 using UnityEngine;
 using Vmaya.Scene3D;
 using Vmaya.Util;
+using MyBox;
+using System;
 
 namespace Vmaya.Robot.Controls
 {
@@ -12,36 +14,52 @@ namespace Vmaya.Robot.Controls
         [SerializeField]
         private float _centerOffset = 0;
 
+        [SerializeField]
+        private bool _useRigidbody = false;
+
+        [ConditionalField("_useRigidbody")][SerializeField] private float _powerTorque = 1;
+
         private Vector3 _startDirect;
+        private Vector3 _startLocalDirect;
         private float _startAngle;
+        private Quaternion _startRotate;
+
+        private Rigidbody _rigidBody => GetComponent<Rigidbody>();
+        protected Vector3 _worldNormal => transform.TransformDirection(_localAxis);
+        protected Plane _worldPlane => new Plane(_worldNormal, _centerPlane);
+        protected Vector3 _centerPlane => transform.position + _worldNormal * _centerOffset;
 
         private void OnValidate()
         {
             if (_localAxis.sqrMagnitude > 0) _localAxis.Normalize();
         }
 
-        public float getMouseAngle()
+
+        protected Vector3 getMousePoint()
         {
-            Vector3 worldDirect = transform.parent.TransformDirection(_localAxis);
-            Vector3 pos = transform.position + worldDirect * _centerOffset;
-            Plane plane = new Plane(worldDirect, pos);
             float distance;
             Ray ray = hitDetector.mRay();
+            _worldPlane.Raycast(ray, out distance);
+            return ray.GetPoint(distance);
+        }
 
-            if (plane.Raycast(ray, out distance))
-            {
-                Vector3 point = ray.GetPoint(distance);
-                Vector3 direct = point - pos;
+        public float getMouseAngle()
+        {
+            Vector3 center = _centerPlane;
+            Vector3 point = getMousePoint();
+            Vector3 direct = point - center;
 
-                Debug.DrawLine(pos, pos + _startDirect * direct.magnitude, Color.blue);
-                Debug.DrawLine(pos, point);
-                float angle = Vector3.SignedAngle(_startDirect, direct, transform.parent.TransformDirection(_localAxis));
+            DebugDirect(_startDirect * direct.magnitude, Color.blue);
+            DebugDirect(direct, Color.white);
 
-                Debug.Log(angle);
-                return angle;
-            }
+            float angle = Vector3.SignedAngle(_startDirect, direct, _worldNormal);
 
-            return 0;
+            return angle;
+        }
+
+        protected void DebugDirect(Vector3 direct, Color color)
+        {
+            Debug.DrawLine(_centerPlane, _centerPlane + direct, color);
         }
 
         public override void doMouseDown()
@@ -58,15 +76,24 @@ namespace Vmaya.Robot.Controls
 
         protected void saveStartData()
         {
-            _startDirect = transform.forward;
-            _startAngle = getMouseAngle();
+            _startDirect    = (getMousePoint() - _centerPlane).normalized;
+            _startLocalDirect = transform.InverseTransformDirection(_startDirect);
+            _startAngle     = getMouseAngle();
+            _startRotate    = transform.rotation;
         }
         protected override void doDrag()
         {
-            float curAngle = getMouseAngle();
-            float delta = curAngle - _startAngle;
-            transform.localRotation = Quaternion.AngleAxis(delta, _localAxis) * transform.localRotation;
-            _startAngle = curAngle;
+            float delta = getMouseAngle();
+
+            if (_useRigidbody && _rigidBody)
+            {
+                Vector3 _curDirect = transform.TransformDirection(_startLocalDirect);
+                float _curDelta = Vector3.SignedAngle(_startDirect, _curDirect, _worldNormal);
+
+                _rigidBody.AddTorque(_worldNormal * Mathf.DeltaAngle(_curDelta, delta) * _powerTorque);
+
+            }
+            else transform.rotation = Quaternion.AngleAxis(delta, _worldNormal) * _startRotate;
         }
 
         protected override bool Dragging()

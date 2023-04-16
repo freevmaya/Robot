@@ -1,4 +1,4 @@
-using System.Collections;
+using MyBox;
 using System.Collections.Generic;
 using UnityEngine;
 using Vmaya.IK;
@@ -8,8 +8,11 @@ namespace Vmaya.Robot.Components
 {
     public class RotationElement : SimpleChainLink, IRotationElement
     {
+
         [SerializeField]
-        private Limit _limit;
+        protected bool useLimit;
+
+        [ConditionalField("useLimit")] [SerializeField] private Limit _limit;
 
         [SerializeField]
         private Vector3 _baseDirect = Vector3.forward;
@@ -17,8 +20,11 @@ namespace Vmaya.Robot.Components
         [SerializeField]
         private Vector3 _axis = Vector3.left;
 
+        public Limit Limit => getAngleLimiter();
+
         private float _angle;
-        public bool Threshold => (_angle == _limit.min) || (_angle == _limit.min);
+        public bool Threshold => (_angle == Limit.min) || (_angle == Limit.max);
+        protected ConfigurableJoint joint => GetComponent<ConfigurableJoint>();
 
         [HideInInspector]
         public Vector3 StartOffset;
@@ -28,6 +34,8 @@ namespace Vmaya.Robot.Components
         private void OnValidate()
         {
             _baseDirect = _baseDirect.normalized;
+
+            if (!useLimit && joint) _limit = getJointLimit();
         }
 
         private void Start()
@@ -57,9 +65,14 @@ namespace Vmaya.Robot.Components
             return Vector3.SignedAngle(getBaseDirect(), getDirect(), getAxis());
         }
 
+        protected Limit getJointLimit()
+        {
+            return joint ? Limit.init(joint.lowAngularXLimit.limit, joint.highAngularXLimit.limit) : default;
+        }
+
         public Limit getAngleLimiter()
         {
-            return _limit;
+            return useLimit ? _limit : (joint ? getJointLimit() : default);
         }
 
         public Vector3 getAxis()
