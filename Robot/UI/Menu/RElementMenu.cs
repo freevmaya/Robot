@@ -5,6 +5,7 @@ using UnityEngine;
 using Vmaya.Command;
 using Vmaya.Language;
 using Vmaya.Robot.Command;
+using Vmaya.Robot.Entity;
 using Vmaya.Robot.UI.Menu;
 using Vmaya.Scene3D;
 using Vmaya.UI.Menu;
@@ -58,6 +59,10 @@ namespace Vmaya.Robot.UI
         private void Disconnect()
         {
             CommandManager.ExecuteCmd(new DisconnectCommand(_entity));
+        }
+
+        public void Set(List<MenuItemData> a_items)
+        {
         }
 
         public List<MenuItemData> Get()

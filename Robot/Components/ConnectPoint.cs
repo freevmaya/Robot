@@ -8,13 +8,18 @@ namespace Vmaya.Robot.Components
     [ExecuteInEditMode]
     public class ConnectPoint : MonoBehaviour, IJoinPoint
     {
+        [System.Serializable]
+        protected class PointRecord
+        {
+            public Indent Connected;
+            public Vector3 ConnectedPosition;
+            public Vector3 ConnectedEuler;
+        }
+
         protected IConnectableElement _own => GetComponentInParent<IConnectableElement>();
 
         [SerializeField]
         private ConnectType _connectType;
-
-        [SerializeField]
-        private float _scaleFactor = 1;
 
         [SerializeField]
         private Component connected;
@@ -61,18 +66,14 @@ namespace Vmaya.Robot.Components
             return transform.position;
         }
 
-        protected virtual void updateConnected(bool resetRotateAndScale = true)
+        protected virtual void updateConnected(bool resetRotate = true)
         {
             if ((_own != null) && (_connected != null))
             {
                 if (_makeChild) _connected.Trans().parent = transform;
                 connected = _connected as Component;
-                if (resetRotateAndScale)
-                {
+                if (resetRotate)
                     _connected.Trans().rotation = transform.rotation;
-                    _connected.Trans().localScale = new Vector3(_scaleFactor, _scaleFactor, _scaleFactor);
-                }
-                _connected.GetRigidBody().useGravity = false;
 
                 ConfigurableJoint joint = _connected.GetJoint();
                 if (joint)
@@ -94,7 +95,6 @@ namespace Vmaya.Robot.Components
                 joint.xMotion = ConfigurableJointMotion.Free;
                 joint.yMotion = ConfigurableJointMotion.Free;
                 joint.zMotion = ConfigurableJointMotion.Free;
-                _connected.GetRigidBody().useGravity = true;
                 _connected = null;
             }
         }
@@ -120,6 +120,64 @@ namespace Vmaya.Robot.Components
                 return null;
 
             return _connected;
+        }
+
+        protected virtual void restoreFromData(PointRecord pr)
+        {
+            if (!Indent.isNull(pr.Connected))
+            {
+                SetConnect(pr.Connected.Find() as IConnectableElement);
+                _connected.Trans().position = pr.ConnectedPosition;
+                _connected.Trans().rotation = Quaternion.Euler(pr.ConnectedEuler);
+                _connected.Freeze(true);
+            }
+        }
+
+        protected virtual PointRecord createPointRecord()
+        {
+            return new PointRecord();
+        }
+
+        protected virtual PointRecord getRestoreData()
+        {
+            PointRecord pr = createPointRecord();
+            if (connected)
+            {
+                pr.Connected = new Indent(connected);
+                pr.ConnectedPosition = connected.transform.position;
+                pr.ConnectedEuler = connected.transform.rotation.eulerAngles;
+            }
+            return pr;
+        }
+
+        public virtual void setJson(string jsonData)
+        {
+            if (!string.IsNullOrEmpty(jsonData))
+            {
+                PointRecord pr = createPointRecord();
+                JsonUtility.FromJsonOverwrite(jsonData, pr);
+                if (!Indent.isNull(pr.Connected))
+                    Indent.AfterInstance(this, pr.Connected, () =>
+                    {
+                        restoreFromData(pr);
+                    });
+                else restoreFromData(pr);
+            }
+        }
+
+        public virtual string getJson()
+        {
+            return JsonUtility.ToJson(getRestoreData());
+        }
+
+        public void setActive(bool value)
+        {
+            gameObject.SetActive(value);
+        }
+
+        public bool getActive()
+        {
+            return gameObject.activeSelf;
         }
     }
 }

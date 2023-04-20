@@ -9,15 +9,29 @@ namespace Vmaya.Robot.Controls
     [RequireComponent(typeof(IConnectableElement))]
     public class DDRotateRobotElement : DragDropRotate
     {
-        protected IConnectableElement _element => GetComponent<IConnectableElement>();
+        protected IConnectableRotationElement _element => GetComponent<IConnectableRotationElement>();
 
-        [SerializeField]
-        private bool _freezeTop = false;
+        protected override void saveStartData()
+        {
+            base.saveStartData();
+            _startAngle = _element.getAngle();
+        }
+
+        protected float getDeltaAngle()
+        {
+            return _startAngle + getMouseAngle();
+        }
+
+        protected override bool Dragging()
+        {
+            return Mathf.Abs(getDeltaAngle()) > 0.5f;
+        }
 
         protected override void beginDrag()
         {
             base.beginDrag();
-            if (_freezeTop) setFreezeTop(_element, true);
+
+            _element.Freeze(false);
 
             if (ProtractorTool.instance && (_element.GetMainSlot() != null))
                 ProtractorTool.instance.Show(_element.GetMainSlot());
@@ -26,24 +40,16 @@ namespace Vmaya.Robot.Controls
         protected override void Drop()
         {
             base.Drop();
-            if (_freezeTop) setFreezeTop(_element, false);
+
+            _element.Freeze(true);
 
             if (ProtractorTool.instance)
                 ProtractorTool.instance.Hide();
         }
 
-        private static void setFreezeTop(IConnectableElement a_element, bool value)
+        protected override void doDrag()
         {
-
-            for (int i=0; i< a_element.SlotCount(); i++)
-            {
-                IConnectableElement ce = a_element.GetSlot(i).GetConnected();
-                if (ce != null)
-                {
-                    ce.Restrict(value ? 5 : 0);
-                    setFreezeTop(ce, value);
-                }
-            }
+            _element.setAngle(getDeltaAngle());
         }
     }
 }

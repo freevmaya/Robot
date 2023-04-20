@@ -13,12 +13,12 @@ namespace Vmaya.Robot.Components
             do
             {
                 result.Insert(0, current);
-            } while ((current = current.GetParent()) != null);
+            } while ((current = current.GetParentLink()) != null);
 
             return result;
         }
 
-        public IChainLink GetParent()
+        public IChainLink GetParentLink()
         {
             return transform.parent.GetComponentInParent<IChainLink>();
         }

@@ -21,7 +21,7 @@ namespace Vmaya.Robot.Controls
 
         private Vector3 _startDirect;
         private Vector3 _startLocalDirect;
-        private float _startAngle;
+        protected float _startAngle;
         private Quaternion _startRotate;
 
         private Rigidbody _rigidBody => GetComponent<Rigidbody>();
@@ -74,7 +74,7 @@ namespace Vmaya.Robot.Controls
             saveStartData();
         }
 
-        protected void saveStartData()
+        protected virtual void saveStartData()
         {
             _startDirect    = (getMousePoint() - _centerPlane).normalized;
             _startLocalDirect = transform.InverseTransformDirection(_startDirect);

@@ -10,6 +10,7 @@ using Vmaya.Entity;
 using Vmaya.Language;
 using Vmaya.Robot.Command;
 using Vmaya.Robot.Components;
+using Vmaya.Robot.Entity;
 using Vmaya.RW;
 
 namespace Vmaya.Robot.Catalog

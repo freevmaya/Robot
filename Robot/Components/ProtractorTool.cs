@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Vmaya.Drawable;
+using Vmaya.Scene3D;
 
 namespace Vmaya.Robot.Components
 {
@@ -15,16 +16,18 @@ namespace Vmaya.Robot.Components
         public static ProtractorTool instance => _instance ? _instance : _instance = FindObjectOfType<ProtractorTool>(true);
 
         private IJoinPoint _point;
+        private bool _show;
+        protected ConnectableRotateElement connected => _point.GetConnected() as ConnectableRotateElement;
 
         public void Show(IJoinPoint point)
         {
+            _show = true;
             _point = point;
             gameObject.SetActive(true);
 
-            ConfigurableJoint joint = _point.GetConnected().GetJoint();
-
-            if (joint.angularXMotion == ConfigurableJointMotion.Limited)
-                setLimit(joint.lowAngularXLimit.limit, joint.highAngularXLimit.limit);
+            Limit limit = connected.getAngleLimiter();
+            if (limit.size > 0)
+                setLimit(limit.min, limit.max);
             else setLimit(0, 360);
 
             updatePosition();
@@ -32,19 +35,35 @@ namespace Vmaya.Robot.Components
 
         protected void updatePosition()
         {
-            transform.position = _point.Trans().position;
 
-            IConnectableElement connected = _point.GetConnected();
+            if (connected != null)
+            {
+                transform.position = _point.Trans().position;
 
-            transform.rotation = _point.Trans().rotation;// * Quaternion.LookRotation(, Vector3.up);
+                Limit limit = connected.getAngleLimiter();
+                Quaternion q = default;
+                if (limit.size > 0)
+                    q = Quaternion.AngleAxis(90 + limit.min, Vector3.up);
 
-            _anglePointer.localRotation = Quaternion.AngleAxis(connected.GetCurrentAngle(), Vector3.up);
+                transform.rotation = _point.Trans().rotation;
+
+                _protractor.transform.localRotation = q;
+                _measureLines.transform.localRotation = q;
+                _anglePointer.localRotation = Quaternion.AngleAxis(connected.getAngle(), Vector3.up);
+            }
         }
 
         public void Hide()
         {
-            gameObject.SetActive(false);
-            _point = null;
+            _show = false;
+            Vmaya.Utils.setTimeout(this, () =>
+            {
+                if (!_show)
+                {
+                    gameObject.SetActive(false);
+                    _point = null;
+                }
+            }, 1);
         }
 
         public void setLimit(float min, float max)

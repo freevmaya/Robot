@@ -1,4 +1,5 @@
 using UnityEngine;
+using Vmaya.Robot.Entity;
 using Vmaya.RW;
 
 namespace Vmaya.Robot.Catalog

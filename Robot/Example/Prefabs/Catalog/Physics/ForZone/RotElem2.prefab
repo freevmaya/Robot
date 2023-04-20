@@ -106,7 +106,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7841841664099605732}
-  - component: {fileID: 7841841664099605728}
+  - component: {fileID: 8059262825297791718}
+  - component: {fileID: -8801919224201866745}
   - component: {fileID: 7841841664099605735}
   - component: {fileID: 7841841664099605734}
   - component: {fileID: 7841841664099605729}
@@ -117,7 +118,6 @@ GameObject:
   - component: {fileID: 7502511645475503601}
   - component: {fileID: 936190792812272681}
   - component: {fileID: 2941363516725015024}
-  - component: {fileID: -8801919224201866745}
   m_Layer: 0
   m_Name: RotElem2
   m_TagString: Untagged
@@ -142,7 +142,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7841841664099605728
+--- !u!114 &8059262825297791718
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -151,7 +151,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7841841664099605739}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61aa676d1f31a964a980089fdafe844b, type: 3}
+  m_Script: {fileID: 11500000, guid: 8fb141ad2a54890428e9678ecd530629, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _connectType: 0
@@ -160,9 +160,28 @@ MonoBehaviour:
   _connectPoints:
   - {fileID: 7841841664182166588}
   _workingBounds: {fileID: 0}
+  OnChange:
+    m_PersistentCalls:
+      m_Calls: []
   SizeLimit:
-    min: 0
+    min: 0.2
     max: 2
+  _angleLimit:
+    min: -100
+    max: 100
+--- !u!114 &-8801919224201866745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7841841664099605739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b08a36ee78669d840b04203b5249d486, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _size: 0
 --- !u!114 &7841841664099605735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,7 +207,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 5
   m_AngularDrag: 30
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -222,8 +241,8 @@ ConfigurableJoint:
     bounciness: 0
     contactDistance: 0
   m_AngularXLimitSpring:
-    spring: 200
-    damper: 50
+    spring: 100
+    damper: 10
   m_LowAngularXLimit:
     limit: -110
     bounciness: 0
@@ -409,7 +428,6 @@ MonoBehaviour:
   _centerOffset: 0
   _useRigidbody: 1
   _powerTorque: 5
-  _freezeTop: 1
 --- !u!114 &2941363516725015024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -425,18 +443,6 @@ MonoBehaviour:
   component1: {fileID: 936190792812272681}
   component2: {fileID: 7502511645475503601}
   invert: 0
---- !u!114 &-8801919224201866745
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7841841664099605739}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b08a36ee78669d840b04203b5249d486, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &7841841664182166530
 GameObject:
   m_ObjectHideFlags: 0

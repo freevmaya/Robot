@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Vmaya.Language;
 using Vmaya.Robot.Components;
+using Vmaya.Robot.Entity;
 
 namespace Vmaya.Robot.Command
 {
@@ -14,11 +15,11 @@ namespace Vmaya.Robot.Command
         [SerializeField]
         private Indent _parent;
         protected IConnectableElement element => entity.Element;
-        protected IConnectableElement parent => _parent.FindInterface<IConnectableElement>();
+        protected IConnectableElement parent => _parent.Find() as IConnectableElement;
         public DisconnectCommand(ConnectableEntity entity) : base(entity)
         {
             _slot = element.GetMainSlotIdx();
-            _parent = new Indent(element.GetParent() as Component);
+            _parent = new Indent(element.GetParentLink() as Component);
         }
 
         public override string commandName()

@@ -3,10 +3,11 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using Vmaya.Scene3D;
+using UnityEngine.Events;
 
 namespace Vmaya.Robot.Components
 {
-    [ExecuteInEditMode]
+    //[ExecuteInEditMode]
     public class ConnectableElement : MonoBehaviour, IConnectableElement
     {
         [SerializeField]
@@ -26,19 +27,18 @@ namespace Vmaya.Robot.Components
         [SerializeField]
         protected BoundsComponent _workingBounds;
 
+        public UnityEvent OnChange;
+
         public IJoinPoint this[int index] => _connectPoints[index] ? _connectPoints[index].GetComponent<IJoinPoint>() : null;
 
         public float Size { get => getSize(); set => setSize(value); }
         public Limit SizeLimit = Limit.init(0, 2);
 
-        private float _lowSafe;
-        private float _highSafe;
-        private ConfigurableJointMotion _motionSafe;
-
         private void OnValidate()
         {
             if (!_myJoint) _myJoint = GetComponent<ConfigurableJoint>();
             if (!_myRigidBody) _myRigidBody = GetComponent<Rigidbody>();
+            if (!_workingBounds) _workingBounds = GetComponent<BoundsComponent>();
 
             if (_connectPoints != null)
             {
@@ -56,22 +56,6 @@ namespace Vmaya.Robot.Components
             }
         }
 
-        protected virtual void Start()
-        {
-            ConfigurableJoint joint = GetJoint();
-            if (joint)
-            {
-                _lowSafe = joint.lowAngularXLimit.limit;
-                _highSafe = joint.highAngularXLimit.limit;
-                _motionSafe = joint.angularXMotion;
-            }
-        }
-
-        private void OnDisable()
-        {
-
-        }
-
         public void UpdateConnectPointsPosition()
         {
             foreach (ConnectPoint point in _connectPoints)
@@ -87,18 +71,23 @@ namespace Vmaya.Robot.Components
 
         protected virtual void setSize(float value)
         {
-            if (value > 0)
+            if ((value > 0) && (Size != value))
             {
-                Physics.autoSimulation = false;
+
+                if (Physics.autoSimulation)
+                {
+                    Physics.autoSimulation = false;
+                    Vmaya.Utils.afterEndOfFrame(this, () =>
+                    {
+                        Physics.autoSimulation = true;
+                    });
+                }
 
                 Vector3 scale = new Vector3(value, value, value);
                 transform.localScale = scale;
                 UpdateConnectPointsPosition();
 
-                Vmaya.Utils.afterEndOfFrame(this, () =>
-                {
-                    Physics.autoSimulation = true;
-                });
+                OnChange.Invoke();
             }
         }
 
@@ -144,6 +133,10 @@ namespace Vmaya.Robot.Components
         protected virtual void toSlotA(int slot, IConnectableElement other)
         {
             this[slot].SetConnect(other);
+            Vmaya.Utils.afterEndOfFrame(this, () =>
+            {
+                other.Freeze(true);
+            });
         }
 
         public void toSlot(int slot, IConnectableElement other)
@@ -230,40 +223,13 @@ namespace Vmaya.Robot.Components
             return -1;
         }
 
-        public void Restrict(float valueRestrict)
-        {
-            ConfigurableJoint joint = GetJoint();
-            IConnectableElement parent = GetParent();
-            if (joint && (parent != null) && (_motionSafe != ConfigurableJointMotion.Locked))
-            {
-                Limit limit = Limit.init(_lowSafe, _highSafe);
-                if (valueRestrict > 0)
-                {
-                    float angle = parent.GetCurrentAngle();
-
-                    limit.min = angle - valueRestrict;
-                    limit.max = angle + valueRestrict;
-                    joint.angularXMotion = ConfigurableJointMotion.Limited;
-                }
-                else joint.angularXMotion = _motionSafe;
-
-                SoftJointLimit sl = joint.lowAngularXLimit;
-                sl.limit = limit.min;
-                joint.lowAngularXLimit = sl;
-
-                SoftJointLimit hl = joint.highAngularXLimit;
-                hl.limit = limit.max;
-                joint.highAngularXLimit = hl;
-            }
-        }
-
         public Bounds getWorkingBounds()
         {
             if (_workingBounds) return _workingBounds.bounds;
             return new Bounds();
         }
 
-        public Vector3 GetBaseVector()
+        public Vector3 getBaseDirect()
         {
             ConfigurableJoint joint = GetJoint();
             if (joint)
@@ -271,18 +237,40 @@ namespace Vmaya.Robot.Components
             return default;
         }
 
-        public float GetCurrentAngle()
+        public List<IChainLink> GetChain()
         {
-            ConfigurableJoint joint = GetJoint();
-            IJoinPoint mainSlot = GetMainSlot();
-            if (joint && (mainSlot != null))
+            List<IChainLink> result = new List<IChainLink>();
+
+            IChainLink top = this;
+            while (top != null)
             {
-                Vector3 localDirect = GetBaseVector();
-                Vector3 direct = joint.transform.TransformDirection(localDirect);
-                Vector3 baseDirect = mainSlot.Trans().rotation * localDirect;
-                return Vector3.SignedAngle(direct, baseDirect, joint.transform.TransformDirection(joint.axis));
+                result.Add(top);
+                top = top.GetParentLink();
             }
-            return 0;
+
+            return result;
+        }
+
+        public IChainLink GetParentLink()
+        {
+            return GetJoint() && (GetJoint().connectedBody != null) ? GetJoint().connectedBody.GetComponent<IChainLink>() : null;
+        }
+
+        public Vector3 GetPosition()
+        {
+            return transform.position;
+        }
+
+        public virtual void Freeze(bool v)
+        {
+            /*
+            Rigidbody body = GetRigidBody();
+            if (body) GetRigidBody().useGravity = v;
+
+            for (int i = 0; i < SlotCount(); i++)
+                if (GetSlot(i).GetConnected() != null)
+                    GetSlot(i).GetConnected().Freeze(v);
+            */
         }
     }
 }

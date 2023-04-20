@@ -10,6 +10,12 @@ namespace Vmaya.Robot.Components
     public class ConnectPointSlider : ConnectPoint
     {
         [System.Serializable]
+        protected class PointSliderRecord: PointRecord
+        {
+            public float Range;
+        }
+
+        [System.Serializable]
         public enum DirectGuide { X, Y, Z };
         [System.Serializable]
         public enum Align { Left, Center, Right };
@@ -207,6 +213,25 @@ namespace Vmaya.Robot.Components
             _rangeLast = _range;
 
             UpdateConnectedPosition();
+        }
+
+        protected override PointRecord createPointRecord()
+        {
+            return new PointSliderRecord();
+        }
+
+        protected override PointRecord getRestoreData()
+        {
+            PointSliderRecord result = base.getRestoreData() as PointSliderRecord;
+            result.Range = Range;
+            return result;
+        }
+
+        protected override void restoreFromData(PointRecord pr)
+        {
+            PointSliderRecord psr = pr as PointSliderRecord;
+            Range = psr.Range;
+            base.restoreFromData(pr);
         }
     }
 }

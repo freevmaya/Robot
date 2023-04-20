@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Vmaya;
 using Vmaya.Command;
+using Vmaya.Robot.Entity;
 
 namespace Vmaya.Robot.Command
 {

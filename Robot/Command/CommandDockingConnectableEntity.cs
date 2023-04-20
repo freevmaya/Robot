@@ -3,6 +3,7 @@ using UnityEngine;
 using Vmaya.Command;
 using Vmaya.Language;
 using Vmaya.Robot.Catalog;
+using Vmaya.Robot.Entity;
 
 namespace Vmaya.Robot.Command
 {

@@ -29,7 +29,7 @@ namespace Vmaya.Robot.Components
         [HideInInspector]
         public Vector3 StartOffset;
 
-        public IChainLink Parent => GetParent();
+        public IChainLink Parent => GetParentLink();
 
         private void OnValidate()
         {
@@ -104,6 +104,10 @@ namespace Vmaya.Robot.Components
         public bool rotateAvailable()
         {
             return true;
+        }
+
+        public void Restrict(Limit _limit)
+        {
         }
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Vmaya.Entity;
 using Vmaya.Scene3D;
 
 namespace Vmaya.Robot
@@ -7,19 +8,33 @@ namespace Vmaya.Robot
     [System.Serializable]
     public enum ConnectType { HingeOut, HingeIn, HingeSphere, Sliding, Dovetail };
 
+    public interface IChainLink
+    {
+        IChainLink GetParentLink();
+        List<IChainLink> GetChain();
+        Vector3 GetPosition();
+    }
+
+    public interface IRotationElement : IChainLink, IRotatable
+    {
+        Vector3 getBaseDirect();
+        Limit getAngleLimiter();
+        public void Restrict(Limit minMax);
+    }
+
     public interface IJoinElement
     {
         public ConnectType GetConnectType();
         public Transform Trans();
     }
 
-    public interface IJoinPoint : IJoinElement
+    public interface IJoinPoint : IJoinElement, IJsonObject
     {
         public IConnectableElement GetConnected();
         public void SetConnect(IConnectableElement elem);
     }
 
-    public interface IConnectableElement: IJoinElement
+    public interface IConnectableElement: IJoinElement, IChainLink
     {
         public int SlotCount();
         public IJoinPoint GetSlot(int idx);
@@ -32,24 +47,19 @@ namespace Vmaya.Robot
         public int FindFree(ConnectType a_type, Vector3 point);
         public ConfigurableJoint GetJoint();
         public Rigidbody GetRigidBody();
-        public IConnectableElement GetParent();
-        public void Restrict(float valueRestrict);
         public Bounds getWorkingBounds();
-        public float GetCurrentAngle();
-        public Vector3 GetBaseVector();
+
+        public void Freeze(bool v);
+
+
+        //public IConnectableElement GetParent();
+        //public float GetCurrentAngle();
+        //public void SetAngle(float value);
+        //public Vector3 GetBaseVector();
     }
 
-    public interface IChainLink
+    public interface IConnectableRotationElement : IConnectableElement, IRotationElement
     {
-        IChainLink GetParent();
-        List<IChainLink> GetChain();
-        Vector3 GetPosition();
-    }
-
-    public interface IRotationElement: IChainLink, IRotatable
-    {
-        Vector3 getBaseDirect();
-        Limit getAngleLimiter();
     }
 
     public class Utils

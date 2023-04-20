@@ -384,7 +384,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2538379848128626465}
-  - component: {fileID: 5050866059475420592}
+  - component: {fileID: 8852637410980254038}
   - component: {fileID: 8896874577690254527}
   - component: {fileID: 913896240209496594}
   - component: {fileID: 4627673782243929297}
@@ -421,7 +421,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 180, y: 90, z: 0}
---- !u!114 &5050866059475420592
+--- !u!114 &8852637410980254038
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -430,7 +430,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7252238045532709261}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61aa676d1f31a964a980089fdafe844b, type: 3}
+  m_Script: {fileID: 11500000, guid: 8fb141ad2a54890428e9678ecd530629, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _connectType: 0
@@ -439,9 +439,15 @@ MonoBehaviour:
   _connectPoints:
   - {fileID: 5509420783984662239}
   _workingBounds: {fileID: 0}
+  OnChange:
+    m_PersistentCalls:
+      m_Calls: []
   SizeLimit:
-    min: 0
+    min: 0.2
     max: 2
+  _angleLimit:
+    min: 0
+    max: 0
 --- !u!114 &8896874577690254527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -467,7 +473,7 @@ Rigidbody:
   m_Mass: 0.2
   m_Drag: 5
   m_AngularDrag: 30
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -501,8 +507,8 @@ ConfigurableJoint:
     bounciness: 0
     contactDistance: 0
   m_AngularXLimitSpring:
-    spring: 200
-    damper: 50
+    spring: 100
+    damper: 10
   m_LowAngularXLimit:
     limit: 0
     bounciness: 0
@@ -703,7 +709,6 @@ MonoBehaviour:
   _centerOffset: 0
   _useRigidbody: 1
   _powerTorque: 5
-  _freezeTop: 1
 --- !u!114 &-80719836385464063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -716,6 +721,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b08a36ee78669d840b04203b5249d486, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _size: 0
 --- !u!1 &9050664265678256462
 GameObject:
   m_ObjectHideFlags: 0

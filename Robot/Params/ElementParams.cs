@@ -11,10 +11,19 @@ namespace Vmaya.Robot.Params
     [RequireComponent(typeof(ConnectableElement))]
     public class ElementParams : MonoBehaviour, IParamProvider
     {
+        [HideInInspector]
+        [SerializeField]
+        private float _size;
         protected ConnectableElement element => GetComponent<ConnectableElement>();
 
         public void addChangeListener(UnityAction listener)
         {
+            element.OnChange.AddListener(listener);
+        }
+
+        public void removeChangeListener(UnityAction listener)
+        {
+            element.OnChange.RemoveListener(listener);
         }
 
         public bool getActive()
@@ -22,21 +31,22 @@ namespace Vmaya.Robot.Params
             return element.isActiveAndEnabled;
         }
 
-        public void setJson(string json)
+        public virtual void setJson(string json)
         {
+            JsonUtility.FromJsonOverwrite(json, this);
+            element.Size = _size;
         }
 
         public string getJson()
         {
-            return null;
+            return JsonUtility.ToJson(this);
         }
 
-        public List<Parameter> getParams()
+        public virtual List<Parameter> getParams()
         {
             List<Parameter> list = new List<Parameter>();
 
-            list.Add(new Parameter("_size", Lang.instance["size"], TypeParam.TFloat, element.Size, element.SizeLimit));
-            list.Add(new Parameter("_position", Lang.instance["position"], TypeParam.TFloat, 0));
+            list.Add(new Parameter("_size", Lang.instance["size"], TypeParam.TFloat, _size = element.Size, element.SizeLimit));
 
             return list;
         }
@@ -56,11 +66,7 @@ namespace Vmaya.Robot.Params
             return Lang.instance["Connectable element"];
         }
 
-        public void removeChangeListener(UnityAction listener)
-        {
-        }
-
-        protected void updateParam(Parameter value)
+        protected virtual void updateParam(Parameter value)
         {
             switch (value.name)
             {

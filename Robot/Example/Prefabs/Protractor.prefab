@@ -102,7 +102,7 @@ MonoBehaviour:
   weight: 0.01
   variations: 0.07
   radius: 0.98
-  sector: 1
+  sector: 0.263
   stepGrad: 5
 --- !u!1 &5961929335664190029
 GameObject:
@@ -127,7 +127,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5961929335664190029}
-  m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
+  m_LocalRotation: {x: -0.5, y: 0.5, z: -0.5, w: -0.5}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -137,7 +137,7 @@ Transform:
   - {fileID: 434378436693310610}
   m_Father: {fileID: 5961929335779841938}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5961929335779841939
 GameObject:
   m_ObjectHideFlags: 0
