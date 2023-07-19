@@ -11,9 +11,9 @@ namespace Vmaya.Robot.Components
         public Limit AngleLimit;
         public Vector3 Axis = Vector3.left;
 
-        public override void setOpenness(float value)
+        protected override void moveStep(float speed, bool checkPlace = true) 
         {
-            transform.localRotation = Quaternion.AngleAxis(Mathf.Lerp(AngleLimit.min, AngleLimit.max, value), Axis);
+            transform.localRotation = Quaternion.AngleAxis(Mathf.Lerp(AngleLimit.min, AngleLimit.max, opennessTo), Axis);
         }
     }
 }

@@ -38,7 +38,7 @@ namespace Vmaya.Robot.IK.Control
         public override void doMouseDown()
         {
             base.doMouseDown();
-            _startPos = Input.mousePosition;
+            _startPos = VMouse.mousePosition;
             if (_adaptivePlane)
                 _dragPlane = new Plane((transform.position - CameraManager.getCurrent().transform.position).normalized, transform.position);
             else _dragPlane = new Plane(_planeNormal, transform.position);
@@ -70,7 +70,7 @@ namespace Vmaya.Robot.IK.Control
 
         protected override bool Dragging()
         {
-            return (_startPos - Input.mousePosition).magnitude > 1;
+            return (_startPos - VMouse.mousePosition).magnitude > 1;
         }
     }
 }

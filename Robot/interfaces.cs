@@ -17,6 +17,7 @@ namespace Vmaya.Robot
 
     public interface IRotationElement : IChainLink, IRotatable
     {
+        void aimAngle(float angle);
         Vector3 getBaseDirect();
         Limit getAngleLimiter();
         public void Restrict(Limit minMax);
@@ -48,7 +49,6 @@ namespace Vmaya.Robot
         public ConfigurableJoint GetJoint();
         public Rigidbody GetRigidBody();
         public Bounds getWorkingBounds();
-
         public void Freeze(bool v);
 
 

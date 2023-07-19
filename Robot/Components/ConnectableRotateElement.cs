@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Vmaya.Robot.Controls;
 using Vmaya.Scene3D;
 
 namespace Vmaya.Robot.Components
@@ -14,6 +15,15 @@ namespace Vmaya.Robot.Components
         public Limit getAngleLimiter()
         {
             return _angleLimit;
+        }
+
+        public Vector3 getBaseVector()
+        {
+            ConfigurableJoint joint = GetJoint();
+            if (joint)
+                return joint.targetVelocity;
+
+            return Vector3.up;
         }
 
         public Vector3 getAxis()
@@ -72,10 +82,17 @@ namespace Vmaya.Robot.Components
 
         public void setAngle(float value)
         {
-            toAngle(value);
+            ConfigurableJoint joint = GetJoint();
+            if (joint)
+            {
+                Vector3 _worldNormal = transform.TransformDirection(joint.axis);
+
+                MyRigidBody.rotation = Quaternion.AngleAxis(value, _worldNormal);
+                //aimAngle(value);
+            }
         }
 
-        protected void toAngle(float AimAngle)
+        public void aimAngle(float AimAngle)
         {
             ConfigurableJoint joint = GetJoint();
 
@@ -85,11 +102,19 @@ namespace Vmaya.Robot.Components
                 Vector3 _worldNormal = transform.TransformDirection(joint.axis);
                 float deltaAngle = Mathf.DeltaAngle(AimAngle, angle);
 
-                float force;
                 float absDelta = Mathf.Abs(deltaAngle);
 
-                if (absDelta > 3f) force = 10f;
-                else force = absDelta / 3f * 9f + 1f;
+                float startBreak = 10;
+                if (absDelta < startBreak)
+                    deltaAngle = Mathf.Pow(absDelta, 3) / Mathf.Pow(startBreak, 3) * startBreak * (deltaAngle < 0 ? -1 : 1);
+
+                //deltaAngle = Mathf.Pow(deltaAngle, 2) * (deltaAngle < 0 ? -1 : 1);
+
+                float force;
+
+                DragDropRotate ddr = GetComponent<DragDropRotate>();
+                if (ddr) force = ddr.PowerTorque;
+                else force = 10f;
 
                 MyRigidBody.AddTorque(_worldNormal * deltaAngle * force);
             }

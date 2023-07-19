@@ -93,7 +93,7 @@ namespace Vmaya.Robot.Components
             return v;
         }
 
-        protected float fromGuide(Vector3 v)
+        public float fromGuide(Vector3 v)
         {
             switch (_guideDirect)
             {
@@ -127,9 +127,9 @@ namespace Vmaya.Robot.Components
         protected override void updateConnected(bool resetRotateAndScale = true)
         {
             base.updateConnected(resetRotateAndScale);
-            SoftJointLimit jl = Connected.GetJoint().linearLimit;
-            jl.limit = Range / 2f - fromGuide(Connected.getWorkingBounds().size) / 2;
-            Connected.GetJoint().linearLimit = jl;
+
+            ConnectableSliderElement seconnected = Connected as ConnectableSliderElement;
+            if (seconnected) seconnected.UpdateLimit();
         }
 
         protected bool checkChange()

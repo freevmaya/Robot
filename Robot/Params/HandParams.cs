@@ -14,12 +14,18 @@ namespace Vmaya.Robot.Params
         [HideInInspector]
         [SerializeField]
         private float _openness;
+        
+        [HideInInspector]
+        [SerializeField]
+        private float _turn;
         protected HandElement _hand => GetComponent<HandElement>();
         public override List<Parameter> getParams()
         {
             List<Parameter> result = base.getParams();
 
-            result.Add(new Parameter("_openness", Lang.instance["openness"], TypeParam.TFloat, _openness = _hand.Openness, Limit.init(0, 1)));
+            result.Add(new Parameter("_openness", Lang.instance["Openness"], TypeParam.TFloat, (_openness = _hand.Openness) * 100, Limit.init(0, 100)));
+            if (_hand.Wrist)
+                result.Add(new Parameter("_turn", Lang.instance["Turn"], TypeParam.TFloat, _turn = _hand.Turn, Limit.init(0, 360)));
 
             return result;
         }
@@ -29,7 +35,10 @@ namespace Vmaya.Robot.Params
             switch (value.name)
             {
                 case "_openness":
-                    _hand.Openness = _openness = value.NumberValue;
+                    _hand.Openness = _openness = value.NumberValue / 100;
+                    break;
+                case "_turn":
+                    _hand.Turn = _turn = value.NumberValue;
                     break;
                 default: base.updateParam(value);
                     break;
@@ -40,6 +49,7 @@ namespace Vmaya.Robot.Params
         {
             base.setJson(json);
             _hand.Openness = _openness;
+            _hand.Turn = _turn;
         }
     }
 }

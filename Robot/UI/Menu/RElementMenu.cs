@@ -17,7 +17,7 @@ namespace Vmaya.Robot.UI
     {
         [SerializeField]
         private PopupMenu _popupMenu;
-        protected PopupMenu PopupMenu => _popupMenu ? _popupMenu : FindObjectOfType<PopupMenu>(true);
+        protected PopupMenu PopupMenu => _popupMenu ? _popupMenu : _popupMenu = FindObjectOfType<PopupMenu>(true);
 
         private ConnectableEntity _entity => GetComponent<ConnectableEntity>();
 
@@ -30,13 +30,13 @@ namespace Vmaya.Robot.UI
 
         private void doClick(baseHitMouse hit)
         {
-            if (hit.transform.IsChildOf(transform) && Input.GetMouseButtonUp(1))
+            if (hit.transform.IsChildOf(transform) && VMouse.GetMouseButtonUp(1))
                 Show();
         }
 
         public void Show()
         {
-            PopupMenu.Show(Input.mousePosition, this);
+            PopupMenu.Show(VMouse.mousePosition, this);
         }
 
 

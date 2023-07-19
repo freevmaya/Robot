@@ -1,0 +1,114 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4179073832494916366
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4179073832494916367}
+  - component: {fileID: 4179073832494916364}
+  m_Layer: 0
+  m_Name: EntityList
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4179073832494916367
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4179073832494916366}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4179073832494916364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4179073832494916366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 761ca6dfbe0f5bc46b50bc660ce1d08f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _list:
+  - entity_id: RotElem1
+    Name: "\u042D\u043B\u0435\u043C\u0435\u043D\u0442 1"
+  - entity_id: RotElem2
+    Name: "\u042D\u043B\u0435\u043C\u0435\u043D\u0442 2"
+  - entity_id: Base
+    Name: "\u0411\u0430\u0437\u0430 1"
+  - entity_id: SliderStay
+    Name: "\u0411\u0430\u0437\u0430 2"
+  - entity_id: RotElem3
+    Name: "\u0412\u0441\u0442\u0430\u0432\u043A\u0430"
+  - entity_id: RotElem4
+    Name: "\u041A\u043E\u0441\u0442\u043E\u0447\u043A\u0430"
+  - entity_id: Wrist
+    Name: "\u0417\u0430\u043F\u044F\u0441\u0442\u044C\u0435 \u043D\u0430\u0445\u043B\u0435\u0441\u0442"
+  - entity_id: WristIn
+    Name: "\u0417\u0430\u043F\u044F\u0441\u0442\u044C\u0435 \u0448\u0438\u043F"
+  - entity_id: Fork
+    Name: "\u0412\u0438\u043B\u043A\u0430"
+  - entity_id: Thorn
+    Name: "\u0428\u0438\u043F"
+  - entity_id: Slider
+    Name: "\u0421\u043B\u0430\u0439\u0434\u0435\u0440"
+  - entity_id: SliderSmall
+    Name: "\u0421\u043B\u0430\u0439\u0434\u0435\u0440 \u043C\u0430\u043B\u044B\u0439"
+  - entity_id: Handle
+    Name: "\u0420\u0443\u0447\u043A\u0430"
+  - entity_id: Dovetail
+    Name: "\u0428\u0438\u043F\u043E\u0432\u043E\u0435 \u0441\u043E\u0435\u0434\u0438\u043D\u0435\u043D\u0438\u0435"
+  - entity_id: DovetailPlate
+    Name: "\u041F\u043B\u0430\u0442\u0444\u043E\u0440\u043C\u0430 \u0434\u043B\u044F
+      \u0448\u0438\u043F. \u0441\u043E\u0435\u0434."
+  - entity_id: Tower
+    Name: "\u0411\u0430\u0448\u043D\u044F"
+  _prefabsForLibrary:
+  - {fileID: 7252238045532709261, guid: 622a8b6681a9098439a87152fc2c7ee3, type: 3}
+  - {fileID: 7841841664099605739, guid: 37531e1050de31447a67877b12b96358, type: 3}
+  - {fileID: 6395869110327665327, guid: 0095e64749034294c870040a7ba2675d, type: 3}
+  - {fileID: 8477639380641695574, guid: fe2b4292ed714eb4d99bf5c8a0fea72a, type: 3}
+  - {fileID: 7252238045532709261, guid: 03605e2e95607094281fb79cc3ff5948, type: 3}
+  - {fileID: 7841841664099605739, guid: 9b81cb8bb6583094abac9f2523c06efd, type: 3}
+  - {fileID: 8477639380641695574, guid: 9c3c026b50e23934eb1c7cc41200f09c, type: 3}
+  - {fileID: 7252238045532709261, guid: 327d9215bdcf9234bab4d5faa41d8323, type: 3}
+  - {fileID: 7252238045532709261, guid: 90c45fcc7f730bd4580f2548552ef587, type: 3}
+  - {fileID: 8477639380641695574, guid: 729d393b70df0ef47aa35f8b61e08498, type: 3}
+  - {fileID: 8477639380641695574, guid: b0c53dea3b359934c8bf07d36ce7907c, type: 3}
+  - {fileID: 8477639380641695574, guid: d0b1cb3778059cf4db8c0091c3e69807, type: 3}
+  - {fileID: 7252238045532709261, guid: 86200eaef781dcc43bc91785a764da54, type: 3}
+  - {fileID: 7252238045532709261, guid: 7ecadb8ba90d1224085d98be4149a494, type: 3}
+  - {fileID: 7252238045532709261, guid: 979dc0be46f3a554abb65612c2de4513, type: 3}
+  - {fileID: 8477639380641695574, guid: 6cd59a3fde931a74d8fb44e78b27387f, type: 3}
+  _prefabsForDropZone:
+  - {fileID: 7252238045532709261, guid: 8915733fbbaf6ba4bae8bd760d7284aa, type: 3}
+  - {fileID: 7841841664099605739, guid: 3168772a1b2c1c14899fbfec00641ae2, type: 3}
+  - {fileID: 6395869110327665327, guid: a37e3c304994c1045a807d0908725a1a, type: 3}
+  - {fileID: 8477639380641695574, guid: 6fe497043869ad64eb9bfd49b88aa4b8, type: 3}
+  - {fileID: 7252238045532709261, guid: 2bc5704f76f75af4ca44e3dffbab389d, type: 3}
+  - {fileID: 7841841664099605739, guid: 7fae3eb1edd23424cb536b5da0eff288, type: 3}
+  - {fileID: 8477639380641695574, guid: 58263262fd496564ab263dcf0cb9de11, type: 3}
+  - {fileID: 7252238045532709261, guid: a33b2acca52d7364183fddfdc5a2adf9, type: 3}
+  - {fileID: 7252238045532709261, guid: 9008a9a9c19a2db4c932740d7dd98b03, type: 3}
+  - {fileID: 8477639380641695574, guid: 7bd8e3a70b6939049bb1bc68bec37413, type: 3}
+  - {fileID: 8477639380641695574, guid: 33ee193fea93f054b826d6b057a4d489, type: 3}
+  - {fileID: 8477639380641695574, guid: 75396fb04a138764e81c159b0ecd074f, type: 3}
+  - {fileID: 7252238045532709261, guid: c434af00f93d44e4cb7c71bd34f05868, type: 3}
+  - {fileID: 7252238045532709261, guid: 11691195f2a31d24281733315b8686fa, type: 3}
+  - {fileID: 7252238045532709261, guid: 1717f506b6de1914a9fbf5a408f9e003, type: 3}
+  - {fileID: 8477639380641695574, guid: dd209cf1837488f4296e326c1ac11a43, type: 3}

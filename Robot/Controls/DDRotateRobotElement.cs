@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Vmaya.Command;
+using Vmaya.Robot.Command;
 using Vmaya.Robot.Components;
 using Vmaya.Scene3D;
 
@@ -17,16 +19,6 @@ namespace Vmaya.Robot.Controls
             _startAngle = _element.getAngle();
         }
 
-        protected float getDeltaAngle()
-        {
-            return _startAngle + getMouseAngle();
-        }
-
-        protected override bool Dragging()
-        {
-            return Mathf.Abs(getDeltaAngle()) > 0.5f;
-        }
-
         protected override void beginDrag()
         {
             base.beginDrag();
@@ -41,6 +33,10 @@ namespace Vmaya.Robot.Controls
         {
             base.Drop();
 
+            float andAngle = getDeltaAngle();
+            if (CommandManager.instance)
+                CommandManager.instance.executeCmd(new RotateElementCommand(new Indent(_element as Component), _startAngle, andAngle));
+
             _element.Freeze(true);
 
             if (ProtractorTool.instance)
@@ -49,7 +45,7 @@ namespace Vmaya.Robot.Controls
 
         protected override void doDrag()
         {
-            _element.setAngle(getDeltaAngle());
+            _element.aimAngle(getDeltaAngle());
         }
     }
 }

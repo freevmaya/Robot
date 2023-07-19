@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Vmaya.Entity;
 
 namespace Vmaya.Robot.Components
 {
@@ -9,33 +10,26 @@ namespace Vmaya.Robot.Components
 
         public override void Freeze(bool v)
         {
-            ConfigurableJoint joint = GetJoint();
-
-            if (joint && joint.connectedBody)
-            {
-                joint.autoConfigureConnectedAnchor = false;
-
-                Vector3 worldAnchor;
-                if (v)
-                {
-                    worldAnchor = transform.position - joint.connectedBody.transform.position;
-                }
-                else
-                {
-                    IJoinPoint point = GetMainSlot();
-                    worldAnchor = point.Trans().position - joint.connectedBody.transform.position;
-                }
-
-                Vector3 direct = getBaseDirect();
-
-                joint.connectedAnchor = joint.connectedBody.transform.InverseTransformVector(worldAnchor);
-
-                ConfigurableJointMotion lv = v ? ConfigurableJointMotion.Locked : ConfigurableJointMotion.Limited;
-                if (direct.z > 0.5f) joint.zMotion = lv;
-                else if (direct.x > 0.5f) joint.xMotion = lv;
-                else if (direct.y > 0.5f) joint.yMotion = lv;
-            }
+            RobotUtils.SliderFreeze(GetJoint(), GetMainSlot().Trans().position, getBaseDirect(), v);
             base.Freeze(v);
+        }
+
+        protected override void setSize(float value)
+        {
+            base.setSize(value);
+            UpdateLimit();
+        }
+
+        public void UpdateLimit()
+        {
+            ConnectPointSlider point = GetMainSlot() as ConnectPointSlider;
+            if (point)
+            {
+                SoftJointLimit jl = GetJoint().linearLimit;
+                float scale = Trans().localScale.x;
+                jl.limit = point.Range / 2f - point.fromGuide(getWorkingBounds().size * scale) / 2;
+                GetJoint().linearLimit = jl;
+            }
         }
     }
 }

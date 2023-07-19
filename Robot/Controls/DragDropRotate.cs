@@ -17,11 +17,16 @@ namespace Vmaya.Robot.Controls
         [SerializeField]
         private bool _useRigidbody = false;
 
+        [SerializeField]
+        private float _startThresholdPixels = 0.1f;
+
         [ConditionalField("_useRigidbody")][SerializeField] private float _powerTorque = 1;
+        public float PowerTorque => _powerTorque;
 
         private Vector3 _startDirect;
         private Vector3 _startLocalDirect;
         protected float _startAngle;
+        protected Vector3 _startPosition;
         private Quaternion _startRotate;
 
         private Rigidbody _rigidBody => GetComponent<Rigidbody>();
@@ -52,7 +57,7 @@ namespace Vmaya.Robot.Controls
             DebugDirect(_startDirect * direct.magnitude, Color.blue);
             DebugDirect(direct, Color.white);
 
-            float angle = Vector3.SignedAngle(_startDirect, direct, _worldNormal);
+            float angle = Mathf.Round(Vector3.SignedAngle(_startDirect, direct, _worldNormal) * 10f) / 10f; //DEV Rounding
 
             return angle;
         }
@@ -76,6 +81,7 @@ namespace Vmaya.Robot.Controls
 
         protected virtual void saveStartData()
         {
+            _startPosition = VMouse.mousePosition;
             _startDirect    = (getMousePoint() - _centerPlane).normalized;
             _startLocalDirect = transform.InverseTransformDirection(_startDirect);
             _startAngle     = getMouseAngle();
@@ -96,9 +102,19 @@ namespace Vmaya.Robot.Controls
             else transform.rotation = Quaternion.AngleAxis(delta, _worldNormal) * _startRotate;
         }
 
+        protected override void Drop()
+        {
+            base.Drop();
+        }
+
+        protected float getDeltaAngle()
+        {
+            return _startAngle + getMouseAngle();
+        }
+
         protected override bool Dragging()
         {
-            return Mathf.Abs(_startAngle - getMouseAngle()) > 0.5f;
+            return Mathf.Abs((VMouse.mousePosition -_startPosition).magnitude) > _startThresholdPixels;
         }
     }
 }

@@ -73,16 +73,7 @@ namespace Vmaya.Robot.Components
         {
             if ((value > 0) && (Size != value))
             {
-
-                if (Physics.autoSimulation)
-                {
-                    Physics.autoSimulation = false;
-                    Vmaya.Utils.afterEndOfFrame(this, () =>
-                    {
-                        Physics.autoSimulation = true;
-                    });
-                }
-
+                RobotUtils.DelayPhysics();
                 Vector3 scale = new Vector3(value, value, value);
                 transform.localScale = scale;
                 UpdateConnectPointsPosition();

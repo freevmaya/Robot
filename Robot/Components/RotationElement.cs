@@ -75,6 +75,11 @@ namespace Vmaya.Robot.Components
             return useLimit ? _limit : (joint ? getJointLimit() : default);
         }
 
+        public Vector3 getBaseVector()
+        {
+            return getDirect();
+        }
+
         public Vector3 getAxis()
         {
             return transform.TransformDirection(_axis);
@@ -99,6 +104,11 @@ namespace Vmaya.Robot.Components
 
                 transform.localRotation = Quaternion.AngleAxis(_angle, Vector3.left);
             }
+        }
+
+        public void aimAngle(float angle)
+        {
+            setAngle(angle);
         }
 
         public bool rotateAvailable()
