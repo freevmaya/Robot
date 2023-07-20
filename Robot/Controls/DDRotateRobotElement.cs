@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Vmaya.Command;
+using Vmaya.Entity.Commands;
 using Vmaya.Robot.Command;
 using Vmaya.Robot.Components;
 using Vmaya.Scene3D;
@@ -13,10 +14,15 @@ namespace Vmaya.Robot.Controls
     {
         protected IConnectableRotationElement _element => GetComponent<IConnectableRotationElement>();
 
+        private JsonObjectCommand _command;
+
         protected override void saveStartData()
         {
             base.saveStartData();
             _startAngle = _element.getAngle();
+
+            if (CommandManager.instance)
+                _command = new JsonObjectCommand(_element);
         }
 
         protected override void beginDrag()
@@ -33,9 +39,8 @@ namespace Vmaya.Robot.Controls
         {
             base.Drop();
 
-            float andAngle = getDeltaAngle();
-            if (CommandManager.instance)
-                CommandManager.instance.executeCmd(new RotateElementCommand(new Indent(_element as Component), _startAngle, andAngle));
+            if (CommandManager.instance) 
+                CommandManager.instance.executeCmd(_command);
 
             _element.Freeze(true);
 

@@ -36,7 +36,7 @@ namespace Vmaya.Robot.Command
 
         public override bool execute()
         {
-            _rotation.setAngle(_endAngle);
+            //_rotation.setAngle(_endAngle);
             return true;
         }
 

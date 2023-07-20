@@ -242,6 +242,18 @@ namespace Vmaya.Robot.Components
             return result;
         }
 
+        public List<IChainLink> GetChildren()
+        {
+            List<IChainLink> result = new List<IChainLink>();
+            for (int i=0; i<SlotCount(); i++)
+            {
+                IConnectableElement ce = GetSlot(i).GetConnected();
+                if (ce != null) result.Add(ce);
+            }
+
+            return result;
+        }
+
         public IChainLink GetParentLink()
         {
             return GetJoint() && (GetJoint().connectedBody != null) ? GetJoint().connectedBody.GetComponent<IChainLink>() : null;
@@ -262,6 +274,56 @@ namespace Vmaya.Robot.Components
                 if (GetSlot(i).GetConnected() != null)
                     GetSlot(i).GetConnected().Freeze(v);
             */
+        }
+
+        public void setJson(string jsonData)
+        {
+            this.SetTransformChainData(JsonUtility.FromJson<TranformChainData>(jsonData));
+        }
+
+        public string getJson()
+        {
+            return JsonUtility.ToJson(this.GetTransformChainData());
+        }
+
+        public TranformChainData GetTransformChainData()
+        {
+            Transform trans = transform;
+            TranformChainData result = new TranformChainData();
+            result.position = trans.position;
+            result.scale = trans.localScale;
+            result.rotation = trans.rotation;
+
+            result.children = new List<TranformChainData>();
+            List<IChainLink> children = GetChildren();
+            foreach (IChainLink cl in children)
+                result.children.Add(cl.GetTransformChainData());
+
+            return result;
+        }
+
+        public virtual void SetTransformChainData(TranformChainData tcd)
+        {
+            transform.position = tcd.position;
+            transform.localScale = tcd.scale;
+            transform.rotation = tcd.rotation;
+
+            if (tcd.children != null)
+            {
+                List<IChainLink> children = GetChildren();
+                for (int i = 0; i < tcd.children.Count; i++)
+                    children[i].SetTransformChainData(tcd.children[i]);
+            }
+        }
+
+        public void setActive(bool value)
+        {
+            gameObject.SetActive(value);
+        }
+
+        public bool getActive()
+        {
+            return gameObject.activeSelf;
         }
     }
 }

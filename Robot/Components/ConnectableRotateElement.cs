@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Vmaya.Robot.Controls;
 using Vmaya.Scene3D;
@@ -83,13 +80,19 @@ namespace Vmaya.Robot.Components
         public void setAngle(float value)
         {
             ConfigurableJoint joint = GetJoint();
-            if (joint)
+            IJoinPoint mainSlot = GetMainSlot();
+            if (joint && (mainSlot != null))
             {
-                Vector3 _worldNormal = transform.TransformDirection(joint.axis);
-
-                MyRigidBody.rotation = Quaternion.AngleAxis(value, _worldNormal);
-                //aimAngle(value);
+                Vector3 _worldNormal = joint.transform.TransformDirection(joint.axis);
+                transform.rotation = Quaternion.AngleAxis(value, -_worldNormal) * mainSlot.Trans().rotation;
+                _freeze(true, value);
             }
+        }
+
+        public override void SetTransformChainData(TranformChainData tcd)
+        {
+            base.SetTransformChainData(tcd);
+            _freeze(true, getAngle());
         }
 
         public void aimAngle(float AimAngle)
@@ -125,17 +128,19 @@ namespace Vmaya.Robot.Components
             setAngle(getAngle());
         }
 
-        public override void Freeze(bool v)
+        protected void _freeze(bool v, float angle)
         {
-            float angle = getAngle();
-            setAngle(angle);
-
             Limit limit;
             if (v)
                 limit = Limit.init(angle - 0.01f, angle + 0.01f);
             else limit = getAngleLimiter();
 
             Restrict(limit);
+        }
+
+        public override void Freeze(bool v)
+        {
+            _freeze(v, getAngle());
             base.Freeze(v);
         }
     }

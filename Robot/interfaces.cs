@@ -12,7 +12,10 @@ namespace Vmaya.Robot
     {
         IChainLink GetParentLink();
         List<IChainLink> GetChain();
+        List<IChainLink> GetChildren();
         Vector3 GetPosition();
+        TranformChainData GetTransformChainData();
+        void SetTransformChainData(TranformChainData tcd);
     }
 
     public interface IRotationElement : IChainLink, IRotatable
@@ -35,7 +38,7 @@ namespace Vmaya.Robot
         public void SetConnect(IConnectableElement elem);
     }
 
-    public interface IConnectableElement: IJoinElement, IChainLink
+    public interface IConnectableElement: IJoinElement, IChainLink, IJsonObject
     {
         public int SlotCount();
         public IJoinPoint GetSlot(int idx);
@@ -60,6 +63,15 @@ namespace Vmaya.Robot
 
     public interface IConnectableRotationElement : IConnectableElement, IRotationElement
     {
+    }
+
+    [System.Serializable]
+    public class TranformChainData
+    {
+        public Vector3 position;
+        public Vector3 scale;
+        public Quaternion rotation;
+        public List<TranformChainData> children;
     }
 
     public class Utils
